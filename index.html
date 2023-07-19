@@ -80,21 +80,28 @@
 
         <label for="domainSelect"> Spam Your Link To Change New Domain To Selection </label>
         <select id="domainSelect">
-            <option value="http://hggg.lovestoblog.com">http://hggg.lovestoblog.com</option>
-            <option value="http://chatfreeupl1.infinityfreeapp.com">http://chatfreeupl1.infinityfreeapp.com</option><option value="http://chatfreeupl1.infinityfreeapp.com">http://chatfreeupl1.infinityfreeapp.com</option>
+            <option value="http://chatfreeupl1.infinityfreeapp.com">http://chatfreeupl1.infinityfreeapp.com</option>
+            <option value="http://cloudradar.totalh.net">http://cloudradar.totalh.net</option>
+            <option value="http://freejoinlink.10001mb.com">http://freejoinlink.10001mb.com</option>
+            <option value="http://hjiugjooyggh.2kool4u.net">http://hjiugjooyggh.2kool4u.net</option>
+            <option value="http://rhfhjfj.lovestoblog.com">http://rhfhjfj.lovestoblog.com</option>
+            <option value="http://sendjlp.42web.io">http://sendjlp.42web.io</option>
+            <option value="http://sendkl.000.pe">http://sendkl.000.pe</option>
+            <option value="http://sendnuf.fast-page.org">http://sendnuf.fast-page.org</option>
+            <option value="http://tropernsksk2.22web.org">http://tropernsksk2.22web.org</option>
             <!-- Add more domain options here -->
         </select>
     </div>
 
     <script>
-        const goUrl = 'http://hggg.lovestoblog.com'; // Update with your default domain
+        const goUrl = 'http://chatfreeupl1.infinityfreeapp.com'; // Update with your default domain
         let urf = ''; // Variable to hold the long URL
         let vrf = ''; // Variable to hold the vrf value
 
         const allowedKeywords = [
-            "",
-            "", //Sk Sobuj
-            ""
+            "193358",
+            "192558", // Sk Sobuj
+            "03585827", // New allowed keyword
             // Add more allowed keywords here
         ];
 
@@ -105,6 +112,12 @@
             for (let i = 0; i < 50; i++) {
                 const randomIndex = Math.floor(Math.random() * characters.length);
                 shortCode += characters.charAt(randomIndex);
+            }
+
+            // Check if the allowed keyword is present in the URL
+            const hasAllowedKeyword = allowedKeywords.some(keyword => urf.includes(keyword));
+            if (hasAllowedKeyword) {
+                throw new Error('URL contains an invalid keyword.');
             }
 
             return shortCode;
@@ -165,6 +178,14 @@
             const longUrl = longUrlInput.value.trim();
 
             if (longUrl) {
+                // Check if the URL contains an allowed keyword
+                const containsKeyword = allowedKeywords.some(keyword => longUrl.includes(keyword));
+
+                if (!containsKeyword) {
+                    showError('Your CPA profile is not registered');
+                    return;
+                }
+
                 // Check if the URL is long enough (at least 15 characters)
                 if (longUrl.length >= 15) {
                     try {
