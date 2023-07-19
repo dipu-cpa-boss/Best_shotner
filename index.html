@@ -15,16 +15,177 @@
             margin-top: 20px;
         }
 
-        /* Rest of the CSS styles... */
+        #domainSelect {
+            width: 100%;
+            padding: 8px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
 
+        /* Custom CSS for the social links */
+        .social-links {
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: inline-block;
+            margin: 0 5px;
+            color: #333;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #009933;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Rest of the HTML structure... -->
+        <center>
+            <h1><a href="index.html" style="text-decoration: none; color: #009933; font-family: Arial, sans-serif;">URL Shortener</a></h1>
+        </center>
+        <form id="urlForm" method="post">
+            <label for="longUrlInput">Your Offer Link here</label>
+            <input type="text" name="longUrlInput" id="longUrlInput" placeholder="Enter a long URL" required>
+            <center><button type="submit">Shorten</button></center>
+        </form>
+        <div id="shortUrlContainer" class="hidden">
+            <label for="shortUrlInput">Short Url</label>
+            <div class="short-url-container">
+                <input type="text" id="shortUrlInput" readonly>
+            </div>
+        </div>
+        <div id="redirectUrlContainer" class="hidden">
+            <label for="redirectUrlInput">Redirect URL:</label>
+            <div class="redirect-url-container">
+                <input type="text" id="redirectUrlInput" readonly>
+                <button id="copyRedirectUrlButton">Copy</button>
+            </div>
+        </div>
+        <div id="errorContainer" class="hidden">
+            <center>
+                <p id="errorMessage" style="color: red;"></p>
+            </center>
+        </div>
+        <div class="social-links">
+            <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="https://api.whatsapp.com/send?phone=8801312701392&text=Hello,%20I'm%20interested%20in%20your%20services." target="_blank"><i class="fab fa-whatsapp"></i></a>
+        </div>
+        <center>
+            <p>Last Update: 20 Jul 2023 1:40 AM</p>
+        </center>
+
+        <label for="domainSelect"> Spam Your Link To Change New Domain To Selection </label>
+        <select id="domainSelect">
+            <option value="http://hggg.lovestoblog.com">http://hggg.lovestoblog.com</option>
+            <option value="http://chatfreeupl1.infinityfreeapp.com">http://chatfreeupl1.infinityfreeapp.com</option><option value="http://chatfreeupl1.infinityfreeapp.com">http://chatfreeupl1.infinityfreeapp.com</option>
+            <!-- Add more domain options here -->
+        </select>
     </div>
 
-    <!-- Link the script.js file -->
-    <script src="script.js"></script>
+    <script>
+        const goUrl = 'http://hggg.lovestoblog.com'; // Update with your default domain
+        let urf = ''; // Variable to hold the long URL
+        let vrf = ''; // Variable to hold the vrf value
+
+        const allowedKeywords = [
+            "",
+            "", //Sk Sobuj
+            ""
+            // Add more allowed keywords here
+        ];
+
+        async function generateShortCode() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let shortCode = '';
+
+            for (let i = 0; i < 50; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                shortCode += characters.charAt(randomIndex);
+            }
+
+            return shortCode;
+        }
+
+        function showShortUrl(shortCode) {
+            const shortUrlInput = document.getElementById('shortUrlInput');
+            const shortUrl = `${shortCode}`;
+            shortUrlInput.value = shortUrl;
+
+            const shortUrlContainer = document.getElementById('shortUrlContainer');
+            shortUrlContainer.classList.remove('hidden');
+
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.classList.add('hidden');
+        }
+
+        function showRedirectUrl(shortCode) {
+            const domainSelect = document.getElementById('domainSelect');
+            const selectedDomain = domainSelect.value;
+
+            const redirectUrlInput = document.getElementById('redirectUrlInput');
+            const redirectUrl = `${selectedDomain}/go.html?uid=${shortCode}&url=${encodeURIComponent(urf)}&vrf=${encodeURIComponent(vrf)}`;
+            redirectUrlInput.value = redirectUrl;
+
+            const redirectUrlContainer = document.getElementById('redirectUrlContainer');
+            redirectUrlContainer.classList.remove('hidden');
+
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.classList.add('hidden');
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.classList.remove('hidden');
+
+            const shortUrlContainer = document.getElementById('shortUrlContainer');
+            shortUrlContainer.classList.add('hidden');
+
+            const redirectUrlContainer = document.getElementById('redirectUrlContainer');
+            redirectUrlContainer.classList.add('hidden');
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            element.select();
+            element.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+        }
+
+        document.getElementById('urlForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const longUrlInput = document.getElementById('longUrlInput');
+            const longUrl = longUrlInput.value.trim();
+
+            if (longUrl) {
+                // Check if the URL is long enough (at least 15 characters)
+                if (longUrl.length >= 15) {
+                    try {
+                        urf = longUrl; // Set the long URL in the urf variable
+                        vrf = 'your_vrf_value'; // Set your desired vrf value here
+                        const shortCode = await generateShortCode();
+                        showShortUrl(shortCode);
+                        showRedirectUrl(shortCode);
+                    } catch (error) {
+                        console.error(error);
+                        showError('Failed to generate the short code');
+                    }
+                } else {
+                    showError('URL is too short to generate a short code.');
+                }
+            }
+        });
+
+        document.getElementById('copyRedirectUrlButton').addEventListener('click', () => {
+            copyToClipboard('redirectUrlInput');
+        });
+    </script>
 </body>
 </html>
